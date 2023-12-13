@@ -1,6 +1,7 @@
 #include "monty.h"
 void exe_ops(FILE *fp);
 void free_mem(stack_t *stack);
+void push_err(stack_t *stack, unsigned int line_number);
 char *buf = NULL;
 
 /**
@@ -57,17 +58,14 @@ void exe_ops(FILE *fp)
 			if (strcmp(t, "push") == 0)
 			{
 				t = strtok(NULL, " \t\n");
-				if (t == NULL || (!isdigit(*t) && t[0] != '-'))
+				if (t == NULL)
+					push_err(stack, lnum);
+				for (i = 0; t[i] != '\0'; i++)
 				{
-					fprintf(stderr, "L%u: usage: push integer\n", lnum);
-					free_mem(stack);
-					exit(EXIT_FAILURE);
+					if (!isdigit(t[i]) && t[i] != '-')
+						push_err(stack, lnum);
 				}
-				else
-				{
-					if (t[0] != '-' || (t[0] == '-' && isdigit(t[1])))
-						push(&stack, atoi(t));
-				}
+				push(&stack, atoi(t));
 			}
 			else if (strcmp(t, "pall") == 0)
 			{
@@ -109,4 +107,15 @@ void free_mem(stack_t *stack)
 		free_dlistint(stack);
 	if (buf)
 		free(buf);
+}
+/**
+ * push_err - Prints an error and exits
+ * @stack: A pointer to the top of the stack
+ * @line_number: the line number of the given opcode
+*/
+void push_err(stack_t *stack, unsigned int line_number)
+{
+	fprintf(stderr, "L%u: usage: push integer\n", line_number);
+	free_mem(stack);
+	exit(EXIT_FAILURE);
 }
