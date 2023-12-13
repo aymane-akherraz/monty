@@ -56,7 +56,7 @@ void exe_ops(FILE *fp)
 		{
 			if (strcmp(t, "push") == 0)
 			{
-				t = strtok(NULL, " \t");
+				t = strtok(NULL, " \t\n");
 				if (t == NULL || (!(isdigit(*t)) && t[0] != '-'))
 				{
 					fprintf(stderr, "L%u: usage: push integer\n", lnum);
