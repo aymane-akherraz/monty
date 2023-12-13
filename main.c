@@ -57,7 +57,7 @@ void exe_ops(FILE *fp)
 			if (strcmp(t, "push") == 0)
 			{
 				t = strtok(NULL, " \t");
-				if (t == NULL || !(isdigit(*t)))
+				if (t == NULL || (!(isdigit(*t)) && t[0] != '-'))
 				{
 					fprintf(stderr, "L%u: usage: push integer\n", lnum);
 					free_mem(stack);
