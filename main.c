@@ -57,14 +57,17 @@ void exe_ops(FILE *fp)
 			if (strcmp(t, "push") == 0)
 			{
 				t = strtok(NULL, " \t\n");
-				if (t == NULL || (!(isdigit(*t)) && t[0] != '-'))
+				if (t == NULL || (!isdigit(*t) && t[0] != '-'))
 				{
 					fprintf(stderr, "L%u: usage: push integer\n", lnum);
 					free_mem(stack);
 					exit(EXIT_FAILURE);
 				}
 				else
-					push(&stack, atoi(t));
+				{
+					if (t[0] != '-' || (t[0] == '-' && isdigit(t[1])))
+						push(&stack, atoi(t));
+				}
 			}
 			else if (strcmp(t, "pall") == 0)
 			{
