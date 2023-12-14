@@ -4,30 +4,16 @@
  * push - Adds a new node at the top of the stack
  * @stack: A pointer to the top of the stack
  * @n: integer
- *
+ * @mode: indicates the format of the data whether its a stack or a queue
  * Return: Nothing
 */
 
-void push(stack_t **stack, int n)
+void push(stack_t **stack, int n, unsigned int mode)
 {
-	stack_t *new;
-
-	new = malloc(sizeof(stack_t));
-	if (!new)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		if (*stack)
-			free_dlistint(*stack);
-		free(buf);
-		exit(EXIT_FAILURE);
-	}
-
-	new->n = n;
-	new->prev = NULL;
-	new->next = *stack;
-	if (*stack)
-		(*stack)->prev = new;
-	*stack = new;
+	if (mode)
+		add_dnodeint_end(stack, n);
+	else
+		add_dnodeint(stack, n);
 }
 /**
  * pint - Prints the value at the top of the stack, followed by a new line
@@ -113,7 +99,6 @@ void add(stack_t **stack, unsigned int line_number)
 		s = ((*stack)->n) + ((*stack)->next->n);
 		pop(stack, line_number);
 		(*stack)->n = s;
-
 	}
 	else
 	{

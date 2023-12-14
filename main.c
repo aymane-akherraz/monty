@@ -41,12 +41,10 @@ void exe_ops(FILE *fp)
 	stack_t *stack = NULL;
 	char *t;
 	size_t len = 0;
-	unsigned int lnum = 1, i;
-	instruction_t ops[] = {
-		{"pint", pint},
-		{"pop", pop},
-		{"swap", swap},
-		{"add", add},
+	unsigned int lnum = 1, i, mode = 0;
+	instruction_t ops[] = {{"pint", pint}, {"pop", pop}, {"swap", swap},
+		{"add", add}, {"sub", sub}, {"div", my_div}, {"mul", mul}, {"mod", mod},
+		{"pchar", pchar}, {"pstr", pstr}, {"rotl", rotl}, {"rotr", rotr},
 		{NULL, NULL}
 	};
 
@@ -55,7 +53,11 @@ void exe_ops(FILE *fp)
 		t = strtok(buf, " \t\n");
 		if (t)
 		{
-			if (strcmp(t, "push") == 0)
+			if (strcmp(t, "queue") == 0)
+				mode = 1;
+			else if (strcmp(t, "stack") == 0 && mode)
+				mode = 0;
+			else if (strcmp(t, "push") == 0)
 			{
 				t = strtok(NULL, " \t\n");
 				if (t == NULL)
@@ -65,13 +67,15 @@ void exe_ops(FILE *fp)
 					if (!isdigit(t[i]) && t[i] != '-')
 						push_err(stack, lnum);
 				}
-				push(&stack, atoi(t));
+				push(&stack, atoi(t), mode);
 			}
 			else if (strcmp(t, "pall") == 0)
 			{
 				if (stack)
 					print_dlistint(stack);
 			}
+			else if (*t == '#' || strcmp(t, "nop") == 0)
+				;
 			else
 			{
 				for (i = 0; ops[i].opcode != NULL; i++)
@@ -82,7 +86,7 @@ void exe_ops(FILE *fp)
 						ops[i].f(&stack, lnum);
 						break;
 					}
-					else if (ops[i + 1].opcode == NULL && strcmp(t, "nop"))
+					else if (ops[i + 1].opcode == NULL)
 					{
 						fprintf(stderr, "L%u: unknown instruction %s\n", lnum, t);
 						free_mem(stack);
